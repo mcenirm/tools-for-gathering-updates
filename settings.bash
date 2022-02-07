@@ -1,5 +1,6 @@
-base=$(dirname -- "$BASH_SOURCE")
+base=$(cd -- "$(dirname -- "$BASH_SOURCE")" && /bin/pwd)
 downloads=$base/downloads
+updates=$base/updates
 
 wsusoffline_base_url=https://gitlab.com/wsusoffline/wsusoffline
 wsusoffline_release_tag=12.6.1_CommunityEdition
