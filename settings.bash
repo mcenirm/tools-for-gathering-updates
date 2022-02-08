@@ -1,4 +1,7 @@
-base=$(cd -- "$(dirname -- "$BASH_SOURCE")/.." && /bin/pwd)
+here=$(cd -- "$(dirname -- "$BASH_SOURCE")" && /bin/pwd)
+files=$here/files
+
+base=$(cd -- "$here/.." && /bin/pwd)
 downloads=$base/downloads
 updates=$base/updates
 
