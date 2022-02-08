@@ -6,4 +6,7 @@ set -euo pipefail
 mkdir -pv -- "$updates"
 cd -- "$updates"
 
-unzip $downloads/$wsusoffline_zip_file
+unzip -q $downloads/$wsusoffline_zip_file
+cd wsusoffline/sh
+sed -i -e 's/ www.wsusoffline.net / localhost /' common-tasks/40-configure-downloaders.bash
+bash fix-file-permissions.bash
