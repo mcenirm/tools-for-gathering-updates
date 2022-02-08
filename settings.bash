@@ -1,4 +1,4 @@
-base=$(cd -- "$(dirname -- "$BASH_SOURCE")" && /bin/pwd)
+base=$(cd -- "$(dirname -- "$BASH_SOURCE")/.." && /bin/pwd)
 downloads=$base/downloads
 updates=$base/updates
 
