@@ -5,6 +5,7 @@ base=$(cd -- "$here/.." && /bin/pwd)
 downloads=$base/downloads
 updates=$base/updates
 
+## WSUS Offline
 wsusoffline_base_url=https://gitlab.com/wsusoffline/wsusoffline
 wsusoffline_release_tag=12.6.1_CommunityEdition
 wsusoffline_release_name=wsusofflineCE1261hf1
@@ -17,6 +18,7 @@ wsusoffline_zip_url=$wsusoffline_uploads_url/$wsusoffline_zip_gitlabdiskhash/$ws
 wsusoffline_hashes_file=${wsusoffline_release_name}_hashes.txt
 wsusoffline_hashes_url=$wsusoffline_uploads_url/$wsusoffline_hashes_gitlabdiskhash/$wsusoffline_hashes_file
 
+## Microsoft updates that should not be copied to DVD
 kb_prune_days=120
 kb_ignores=(
 
@@ -52,6 +54,14 @@ kb_ignores=(
     5008230  # Windows 10 for x64-based Systems
 
 )
-
-# unique KB numbers
+# unique-ify KB numbers
 kb_ignores=( $(printf '%s\n' "${kb_ignores[@]}" | sort -u) )
+
+## Rhino3D 7
+rhino7_release_date='20220208'
+rhino7_version_full='7.15.22039.13001'
+rhino7_installer_sha256='315d0a7704a22fbff50026e5533d7aa9f8400bd0515b1cbad80eae893ea63a9c'
+rhino7_installer_file=rhino_en-us_$rhino7_version_full.exe
+rhino7_installer_url="https://files.mcneel.com/dujour/exe/$rhino7_release_date/$rhino7_installer_file"
+rhino7_release_notification_url='https://discourse.mcneel.com/t/rhino-7-service-release-available/114088'
+rhino7_download_latest_url='https://www.rhino3d.com/download/rhino/latest'
