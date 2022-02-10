@@ -14,6 +14,9 @@
 ## wsusoffline commands
 
 * download updates
+
+   *Note: `download-updates.bash` will check files under `.../wsusoffline/timestamps/`, and skip categories based on the `interval_length_*` settings in `.../wsusoffline/sh/libraries/timestamps.bash` (eg, 4 hours for Windows Defender definitions, but 2 days for most of the others)*
+
    ```shell
    cd .../wsusoffline/sh
    ./download-updates.bash w100-x64 enu -includesp -includecpp -includedotnet -includewddefs
@@ -73,3 +76,37 @@ From _growisofs(1)_ man page:
 > `growisofs -dvd-compat -Z /dev/dvd=image.iso`
 >
 > where image.iso represents an arbitrary object in the filesystem, such as file, named pipe or  device  entry.  Nothing is growing here and command name is not intuitive in this context.
+
+Notes on `growisofs {-Z,-M}` and its `mkisofs`/`genisoimage` backend:
+
+* The *`pathspec`* option is a folder whose contents will be placed at the root of the DVD. Multiple can be listed and their contents will be merged.
+
+   ```shell
+   growisofs -Z /dev/dvd -r -R -J pathspec1 pathspec2
+   ```
+
+* The DVD will include the original uid/gid of files unless the `-r` option is used.
+
+   ```shell
+   growisofs -Z /dev/dvd -r -R -J $FOLDER_WITH_FILES
+   ```
+
+* Some _*.cab_ file names will be truncated unless the `-joliet-long` option is included.
+
+   ```shell
+   growisofs -Z /dev/dvd -r -R -J -joliet-long $FOLDER_WITH_FILES
+   ```
+
+* wsusoffline's `sh/create-iso-image.bash` uses these options:
+   * `-verbose`
+   * `-iso-level 4`
+   * `-joliet`
+   * `-joliet-long`
+   * `-rational-rock`
+   * `-udf`
+
+* To prevent an extra optical drive eject (after `growisofs -Z`), initialize and close the disc using the `-dvd-compat` option:
+
+   ```shell
+   growisofs -dvd-compat -Z /dev/sr1 -verbose -iso-level 4 -joliet -joliet-long -rational-rock -udf $FOLDER_WITH_FILES
+   ```

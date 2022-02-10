@@ -6,11 +6,14 @@ downloads=$base/downloads
 updates=$base/updates
 
 ## WSUS Offline
-wsusoffline_base_url=https://gitlab.com/wsusoffline/wsusoffline
+wsusoffline_prune_days=120
+# settings that change with each release
 wsusoffline_release_tag=12.6.1_CommunityEdition
 wsusoffline_release_name=wsusofflineCE1261hf1
 wsusoffline_zip_gitlabdiskhash=9c12b49c6798155ee71c56e2b972d000
 wsusoffline_hashes_gitlabdiskhash=af62cb5f18760936f5396e279dd698e1
+# settings that should not change with each release
+wsusoffline_base_url=https://gitlab.com/wsusoffline/wsusoffline
 wsusoffline_uploads_url=$wsusoffline_base_url/uploads
 wsusoffline_release_url=$wsusoffline_base_url/-/releases/$wsusoffline_release_tag
 wsusoffline_zip_file=$wsusoffline_release_name.zip
@@ -29,6 +32,7 @@ kb_ignores=(
     5010342  # Windows 10 Version 21H2 for x64-based Systems
     5010351  # Windows 10 Version 1809 for x64-based Systems
     5010358  # Windows 10 for x64-based Systems
+    5010354  # Windows Windows Server 2022
     5010359  # Windows 10 Version 1607 for x64-based Systems
     5010386  # Windows 11 for x64-based Systems
 

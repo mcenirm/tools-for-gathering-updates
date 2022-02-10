@@ -8,7 +8,11 @@ cd -- "$updates"
 
 unzip -q $downloads/$wsusoffline_zip_file
 cd wsusoffline/sh
+
+# avoid pinging external system
+# TODO avoid pinging at all
 sed -i -e 's/ www.wsusoffline.net / localhost /' common-tasks/40-configure-downloaders.bash
+
 bash fix-file-permissions.bash
 
 for n in update-generator.ini windows-10-versions.ini
