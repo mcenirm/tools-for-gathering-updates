@@ -1,5 +1,6 @@
 here=$(cd -- "$(dirname -- "$BASH_SOURCE")" && /bin/pwd)
 files=$here/files
+. $here/credentials.bash
 
 base=$(cd -- "$here/.." && /bin/pwd)
 downloads=$base/downloads
@@ -22,7 +23,6 @@ wsusoffline_hashes_file=${wsusoffline_release_name}_hashes.txt
 wsusoffline_hashes_url=$wsusoffline_uploads_url/$wsusoffline_hashes_gitlabdiskhash/$wsusoffline_hashes_file
 
 ## Microsoft updates that should not be copied to DVD
-kb_prune_days=120
 kb_ignores=(
 
     ## Patch Tuesday  08 Feb 2022
@@ -69,3 +69,10 @@ rhino7_installer_file=rhino_en-us_$rhino7_version_full.exe
 rhino7_installer_url="https://files.mcneel.com/dujour/exe/$rhino7_release_date/$rhino7_installer_file"
 rhino7_release_notification_url='https://discourse.mcneel.com/t/rhino-7-service-release-available/114088'
 rhino7_download_latest_url='https://www.rhino3d.com/download/rhino/latest'
+
+## Nessus
+nessus_plugin_file='all-2.0.tar.gz'
+nessus_plugin_url="https://plugins.nessus.org/v2/nessus.php?f=$nessus_plugin_file&u=$nessus_plugin_u&p=$nessus_plugin_p"
+nessus_plugin_version_url='https://plugins.nessus.org/v2/plugins.php'
+nessus_plugin_dir_prefix='nessus-plugin-set-'
+nessus_installer_listing_url='https://www.tenable.com/downloads/nessus?loginAttempted=true'
