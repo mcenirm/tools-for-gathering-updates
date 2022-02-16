@@ -3,7 +3,7 @@ set -euo pipefail
 
 . "$(dirname -- "$BASH_SOURCE")"/settings.bash
 
-cd -- "$updates/wsusoffline/client"
+cd -- "$wsusoffline_client_dir"
 
 # let arrays be empty if there are no matching files
 shopt -s nullglob

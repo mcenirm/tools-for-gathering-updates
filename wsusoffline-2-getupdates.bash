@@ -3,7 +3,7 @@ set -euo pipefail
 
 . "$(dirname -- "$BASH_SOURCE")"/settings.bash
 
-cd -- "$updates/wsusoffline/sh"
+cd -- "$wsusoffline_updates_dir/sh"
 
 # TODO
 # Add option to force updates for some or all categories,

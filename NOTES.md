@@ -10,6 +10,10 @@
    * `genisoimage` (used by wsusoffline)
    * `wodim` (aka `cdrecord`)
 
+* Windows code-signing tools
+   * `osslsigncode` (from _EPEL_)
+   * `perl-Image-ExifTool` (from _EPEL_) for showing metadata from exe files
+
 
 ## wsusoffline commands
 
@@ -110,3 +114,22 @@ Notes on `growisofs {-Z,-M}` and its `mkisofs`/`genisoimage` backend:
    ```shell
    growisofs -dvd-compat -Z /dev/sr1 -verbose -iso-level 4 -joliet -joliet-long -rational-rock -udf $FOLDER_WITH_FILES
    ```
+
+
+## weekly updates
+
+### Windows Defender definitions
+
+_Note: wsusoffline also downloads `mpam-fe.exe`, so the manual step is not necessary._
+
+* "Manually download the update" from [Security intelligence updates for Microsoft Defender Antivirus and other Microsoft antimalware](https://www.microsoft.com/en-us/wdsi/defenderupdates)
+   * "Microsoft Defender Antivirus for Windows 10 and Windows 8.1", "64-bit" link
+   * The downloaded updater file is `mpam-fe.exe`.
+*  [How to manually download the latest antimalware definition updates for Microsoft Forefront Client Security, Microsoft Forefront Endpoint Protection 2010 and Microsoft System Center 2012 Endpoint Protection](https://support.microsoft.com/en-us/topic/how-to-manually-download-the-latest-antimalware-definition-updates-for-microsoft-forefront-client-security-microsoft-forefront-endpoint-protection-2010-and-microsoft-system-center-2012-endpoint-protection-984a3fee-6354-e02f-619a-a71da6291d8a)
+   * `mpam-fe.exe -q` - "This switch installs the definition update in quiet mode. Quiet mode suppresses the file extraction dialog box."
+
+
+### Nessus plugin set
+
+* [Install Plugins Manually](https://docs.tenable.com/nessus/Content/InstallPluginsManually.htm)
+* `C:\Program Files\Tenable\Nessus\nessuscli.exe update {{tar.gz-filename}}`

@@ -8,6 +8,8 @@ updates=$base/updates
 
 ## WSUS Offline
 wsusoffline_prune_days=120
+wsusoffline_updates_dir=$updates/wsusoffline
+wsusoffline_client_dir=$wsusoffline_updates_dir/client
 # settings that change with each release
 wsusoffline_release_tag=12.6.1_CommunityEdition
 wsusoffline_release_name=wsusofflineCE1261hf1
@@ -71,8 +73,11 @@ rhino7_release_notification_url='https://discourse.mcneel.com/t/rhino-7-service-
 rhino7_download_latest_url='https://www.rhino3d.com/download/rhino/latest'
 
 ## Nessus
-nessus_plugin_file='all-2.0.tar.gz'
-nessus_plugin_url="https://plugins.nessus.org/v2/nessus.php?f=$nessus_plugin_file&u=$nessus_plugin_u&p=$nessus_plugin_p"
-nessus_plugin_version_url='https://plugins.nessus.org/v2/plugins.php'
+nessus_updates_dir=$updates/nessus
 nessus_plugin_dir_prefix='nessus-plugin-set-'
+nessus_plugin_details_file=$nessus_updates_dir/${nessus_plugin_dir_prefix}details.bash
+#
+nessus_plugin_file_name='all-2.0.tar.gz'
+nessus_plugin_url="https://plugins.nessus.org/v2/nessus.php?f=$nessus_plugin_file_name&u=$nessus_plugin_u&p=$nessus_plugin_p"
+nessus_plugin_version_url='https://plugins.nessus.org/v2/plugins.php'
 nessus_installer_listing_url='https://www.tenable.com/downloads/nessus?loginAttempted=true'
