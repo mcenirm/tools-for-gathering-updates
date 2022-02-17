@@ -1,10 +1,14 @@
 here=$(cd -- "$(dirname -- "$BASH_SOURCE")" && /bin/pwd)
+
+. -- $here/credentials.bash
+. -- $here/local-settings.bash
+
 files=$here/files
-. $here/credentials.bash
 
 base=$(cd -- "$here/.." && /bin/pwd)
 downloads=$base/downloads
 updates=$base/updates
+dvds=$base/dvds
 
 ## WSUS Offline
 wsusoffline_prune_days=120
