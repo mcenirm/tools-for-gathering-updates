@@ -34,18 +34,49 @@ nessus_dvd_dir=$weekly_dvd_dir/$nessus_plugin_name
 mkdir -pv -- "$mpamfe_dvd_dir"
 cp -pv -- "$mpamfe_file" "$mpamfe_dvd_dir/"
 cat >> "$weekly_dvd_install_instructions" <<EOF
-Update the Windows Defender definitions using:
+
+# Update the Windows Defender definitions
+
+1. Open an admin PowerShell, change to the optical drive, and run the command:
 
     & '$mpamfe_dir_name\\$mpamfe_file_name' -q
+
+2. Verify the definition date in Windows Security
+   ("Virus & threat protection", "Virus & threat protection updates")
+
+Note: The GUI takes a few minutes before it shows the new definition date / version.
 
 EOF
 
 mkdir -pv -- "$nessus_dvd_dir"
 cp -pv -- "$nessus_plugin_file_downloaded" "$nessus_dvd_dir/"
 cat >> "$weekly_dvd_install_instructions" <<EOF
-Update the Nessus plugin set using:
 
-    & 'C:\\Program Files\\Tenable\\Nessus\\nessuscli.exe' update '$nessus_plugin_name\\$nessus_plugin_file_name'
+# Nessus plugin set
+
+Update the Nessus plugin set:
+
+1. Open Nessus web console https://localhost:8834/
+
+2. "Settings" (from the top menu)
+
+3. "Software Update" (tab)
+
+4. "Manual Software Update" (button, top right)
+
+5. "Upload your own plugin archive" (radio button choice)
+
+6. "Continue" (button)
+
+7. Browse to "$nessus_plugin_name\\$nessus_plugin_file_name" and "Open"
+
+8. TODO Document the behavior (eg, the spinner bottom left)
+
+9. "Overview" (tab)
+
+10. Wait about 20 minutes. (This is a good time to run the Windows Defender full scan.)
+
+11. Every 5 minutes, refresh the page until "Plugin Set" (right side) matches the new version.
 
 EOF
 
