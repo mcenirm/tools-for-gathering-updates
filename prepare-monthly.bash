@@ -13,7 +13,7 @@ wsusoffline_dvd_client_dir_name=wsusofflineclient
 wsusoffline_dvd_client_dir=$dvd_dir/$wsusoffline_dvd_client_dir_name
 
 mkdir -pv -- "$wsusoffline_dvd_client_dir"
-cp -pr -- "$wsusoffline_client_dir" "$wsusoffline_dvd_client_dir"
+cp -prT -- "$wsusoffline_client_dir" "$wsusoffline_dvd_client_dir"
 
 cat > "$dvd_install_instructions" <<EOF
 
