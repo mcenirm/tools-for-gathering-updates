@@ -68,9 +68,9 @@ kb_ignores=(
 kb_ignores=( $(printf '%s\n' "${kb_ignores[@]}" | sort -u) )
 
 ## Rhino3D 7
-rhino7_release_date='20220412'
-rhino7_version_full='7.17.22102.05001'
-rhino7_installer_sha256='687eb94f232fd4f11a72c8725102a5493c7883e503fb2ca3648a3c1f1a658d1d'
+rhino7_release_date='20220504'
+rhino7_version_full='7.18.22124.03001'
+rhino7_installer_sha256='3c654c23e24f7383c01ad23d610ad6784f45e4824a36ffe537c1c3898afe4148'
 rhino7_installer_file=rhino_en-us_$rhino7_version_full.exe
 rhino7_installer_url="https://files.mcneel.com/dujour/exe/$rhino7_release_date/$rhino7_installer_file"
 rhino7_release_notification_url='https://discourse.mcneel.com/t/rhino-7-service-release-available/114088'
