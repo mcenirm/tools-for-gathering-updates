@@ -1,13 +1,13 @@
 #!/bin/bash
 set -euo pipefail
 
-. "$(dirname -- "$BASH_SOURCE")"/settings.bash
-. "$here"/prepare-common.bash
+. "$(dirname -- "$BASH_SOURCE")"/settings.py
+. "$here"/prepare-common.py
 
 _dvd_init monthly 'Monthly Security' 'Windows updates'
 
-$here/wsusoffline_2_getupdates.bash
-$here/wsusoffline_3_prune_updates.bash
+$here/wsusoffline_2_getupdates.py
+$here/wsusoffline_3_prune_updates.py
 
 wsusoffline_dvd_client_dir_name=wsusofflineclient
 wsusoffline_dvd_client_dir=$dvd_dir/$wsusoffline_dvd_client_dir_name

@@ -1,7 +1,7 @@
 here=$(cd -- "$(dirname -- "$BASH_SOURCE")" && /bin/pwd)
 
-. -- $here/credentials.bash
-. -- $here/local-settings.bash
+. -- $here/credentials.py
+. -- $here/local-settings.py
 
 files=$here/files
 

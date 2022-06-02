@@ -1,14 +1,14 @@
 #!/bin/bash
 set -euo pipefail
 
-. "$(dirname -- "$BASH_SOURCE")"/settings.bash
-. "$here"/prepare-common.bash
+. "$(dirname -- "$BASH_SOURCE")"/settings.py
+. "$here"/prepare-common.py
 
 _dvd_init weekly 'Weekly Security' 'AV signatures' 'Nessus plugin'
 
 # get updates
 
-$here/wsusoffline_2_getupdates.bash
+$here/wsusoffline_2_getupdates.py
 mpamfe_file_name=mpam-fe.exe
 mpamfe_file=$wsusoffline_client_dir/wddefs/x64-glb/$mpamfe_file_name
 mpamfe_version=$(exiftool -S -s -ProductVersionNumber -- "$mpamfe_file")
@@ -16,7 +16,7 @@ mpamfe_date=$(TZ=UTC exiftool -S -s -TimeStamp -- "$mpamfe_file" | sed -e 's/ .*
 mpamfe_dir_name=windows-defender-$mpamfe_date-$mpamfe_version
 mpamfe_dvd_dir=$dvd_dir/$mpamfe_dir_name
 
-$here/nessus-2-getupdates.bash
+$here/nessus-2-getupdates.py
 . "$nessus_plugin_details_file"
 nessus_dvd_dir=$dvd_dir/$nessus_plugin_name
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-. "$(dirname -- "$BASH_SOURCE")"/settings.bash
+. "$(dirname -- "$BASH_SOURCE")"/settings.py
 
 cd -- "$wsusoffline_client_dir"
 
