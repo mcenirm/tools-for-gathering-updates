@@ -16,7 +16,7 @@ mpamfe_date=$(TZ=UTC exiftool -S -s -TimeStamp -- "$mpamfe_file" | sed -e 's/ .*
 mpamfe_dir_name=windows-defender-$mpamfe_date-$mpamfe_version
 mpamfe_dvd_dir=$dvd_dir/$mpamfe_dir_name
 
-$here/nessus-2-getupdates.py
+$here/nessus_2_getupdates.py
 . "$nessus_plugin_details_file"
 nessus_dvd_dir=$dvd_dir/$nessus_plugin_name
 
