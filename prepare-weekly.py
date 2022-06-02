@@ -2,7 +2,7 @@
 set -euo pipefail
 
 . "$(dirname -- "$BASH_SOURCE")"/settings.py
-. "$here"/prepare-common.py
+. "$here"/prepare_common.py
 
 _dvd_init weekly 'Weekly Security' 'AV signatures' 'Nessus plugin'
 

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 . "$(dirname -- "$BASH_SOURCE")"/settings.py
-. "$here"/prepare-common.py
+. "$here"/prepare_common.py
 
 _dvd_init monthly 'Monthly Security' 'Windows updates'
 
