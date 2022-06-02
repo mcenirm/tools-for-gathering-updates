@@ -2,6 +2,11 @@ credentials.*
 local_settings.*
 local-settings.*
 
+
+# TODO decide if we should not ignore this?
+.vscode/
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
