@@ -6,8 +6,8 @@ set -euo pipefail
 
 _dvd_init monthly 'Monthly Security' 'Windows updates'
 
-$here/wsusoffline-2-getupdates.bash
-$here/wsusoffline-3-prune-updates.bash
+$here/wsusoffline_2_getupdates.bash
+$here/wsusoffline_3_prune_updates.bash
 
 wsusoffline_dvd_client_dir_name=wsusofflineclient
 wsusoffline_dvd_client_dir=$dvd_dir/$wsusoffline_dvd_client_dir_name

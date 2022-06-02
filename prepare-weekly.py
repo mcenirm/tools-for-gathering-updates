@@ -8,7 +8,7 @@ _dvd_init weekly 'Weekly Security' 'AV signatures' 'Nessus plugin'
 
 # get updates
 
-$here/wsusoffline-2-getupdates.bash
+$here/wsusoffline_2_getupdates.bash
 mpamfe_file_name=mpam-fe.exe
 mpamfe_file=$wsusoffline_client_dir/wddefs/x64-glb/$mpamfe_file_name
 mpamfe_version=$(exiftool -S -s -ProductVersionNumber -- "$mpamfe_file")
