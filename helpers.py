@@ -1,5 +1,7 @@
 """Assorted helpers"""
+import datetime
 import itertools
+import os
 import subprocess
 import zipfile
 from pathlib import Path
@@ -75,3 +77,26 @@ def rm_v(
                 seen[removed_item] = base_directory / removed_item
                 removed.append(removed_item)
     return removed
+
+
+def compare_file_time_to_expiry(
+    f: str | Path,
+    comparison: Callable[[float, float], bool],
+    expiry: datetime.datetime,
+    *,
+    st_property: property = os.stat_result.st_mtime,
+) -> bool:
+    """Compare file's mtime to expiry using comparison"""
+    return comparison(
+        datetime.datetime.fromtimestamp(st_property.fget(Path(f).stat())), expiry
+    )
+
+
+def file_is_older_than(
+    f: str | Path,
+    expiry: datetime.datetime,
+    *,
+    st_property: property = os.stat_result.st_mtime,
+) -> bool:
+    """Is file older than expiry?"""
+    return compare_file_time_to_expiry(f, float.__lt__, expiry, st_property=st_property)

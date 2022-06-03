@@ -1,6 +1,7 @@
 """Remove unnecessary files from WSUS Offline client directory"""
 
-from pathlib import Path
+import datetime
+import functools
 
 import helpers
 import settings
@@ -36,13 +37,13 @@ paths_to_check = (
 )
 
 
+prune_expiry = datetime.datetime.now() - datetime.timedelta(
+    days=settings.wsusoffline_prune_days
+)
+file_is_too_old = functools.partial(helpers.file_is_older_than, expiry=prune_expiry)
 for base_directory in (settings.wsusoffline_client_dir / _ for _ in paths_to_check):
     helpers.rm_v(
-        rglobs=(
-            "*.cab",
-            "*.exe",
-            "*.msu",
-        ),
+        rglobs=("*.cab", "*.exe", "*.msu"),
         base_directory=base_directory,
-        only_if=helpers.file_is_older_than(days=settings.wsusoffline_prune_days),
+        only_if=file_is_too_old,
     )
