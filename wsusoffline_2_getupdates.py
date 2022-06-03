@@ -1,9 +1,11 @@
-#!/bin/bash
-set -euo pipefail
+"""Use WSUS Offline to download updates from Microsoft"""
 
-. "$(dirname -- "$BASH_SOURCE")"/settings.py
 
-cd -- "$wsusoffline_updates_dir/sh"
+from subprocess import check_call
+
+import settings
+
+CWD = settings.wsusoffline_updates_dir / "sh"
 
 # TODO
 # Add option to force updates for some or all categories,
@@ -11,4 +13,15 @@ cd -- "$wsusoffline_updates_dir/sh"
 #  * remove timestamps/timestamp*.txt
 #  * (UNTESTED) remove client/md/hashes*.txt to avoid warnings about integrity database
 
-./download-updates.bash w100-x64 enu -includesp -includecpp -includedotnet -includewddefs
+check_call(
+    [
+        "./download-updates.bash",
+        "w100-x64",
+        "enu",
+        "-includesp",
+        "-includecpp",
+        "-includedotnet",
+        "-includewddefs",
+    ],
+    cwd=CWD,
+)
