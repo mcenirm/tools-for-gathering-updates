@@ -1,21 +1,34 @@
-#!/bin/bash
-set -euo pipefail
+"""Install WSUS Offline"""
 
-. "$(dirname -- "$BASH_SOURCE")"/settings.py
+from subprocess import check_call
 
-mkdir -pv -- "$updates"
-cd -- "$updates"
+import helpers
+import settings
 
-unzip -q $downloads/$wsusoffline_zip_file
-cd wsusoffline/sh
+helpers.ensure_directory(settings.updates)
+CWD = settings.updates / "wsusoffline" / "sh"
+
+helpers.unzip(
+    settings.downloads / settings.wsusoffline_zip_file,
+    destination_directory=settings.updates,
+)
 
 # avoid pinging external system
 # TODO avoid pinging at all
-sed -i -e 's/ www.wsusoffline.net / localhost /' common-tasks/40-configure-downloaders.bash
+# TODO use python standard library instead of external sed
+check_call(
+    [
+        "sed",
+        "-i",
+        "-e",
+        "s/ www.wsusoffline.net / localhost /",
+        "common-tasks/40-configure-downloaders.bash",
+    ],
+    cwd=CWD,
+)
 
-bash fix-file-permissions.bash
+check_call(["bash", "fix-file-permissions.bash"], cwd=CWD)
 
-for n in update-generator.ini windows-10-versions.ini
-do
-  cp -ipv "$files/wsusoffline-$n" "./$n"
-done
+for n in ["update-generator.ini", "windows-10-versions.ini"]:
+    # TODO use python standard library instead of external cp
+    check_call(["cp", "-ipv", f"{settings.files}/wsusoffline-{n}", f"./{n}"], cwd=CWD)

@@ -1,7 +1,7 @@
 """Assorted helpers"""
-
+import subprocess
+import zipfile
 from pathlib import Path
-from subprocess import CalledProcessError, check_call
 from urllib.parse import urlparse
 
 
@@ -12,24 +12,22 @@ def ensure_directory(target: str | Path, /) -> Path:
     return target
 
 
-def run(args: list[str], /, *, cwd=None) -> bool:
-    """Run an external command without a lot of fuss"""
-    try:
-        check_call(args, cwd=cwd)
-        return True
-    except CalledProcessError:
-        return False
-
-
-def curl(url: str, /, *, destination_directory=str | Path) -> Path:
+def curl(url: str, /, *, destination_directory: str | Path = None) -> Path:
     """Download a file without a lot of fuss"""
-    # TODO Use Python standard library instead of external curl?
+    cwd = Path(destination_directory)
     expected_downloaded_file_name = Path(urlparse(url).path).name
-    check_call(["curl", "-gsLRO", url], cwd=destination_directory)
-    return Path(destination_directory) / expected_downloaded_file_name
+    # TODO Use Python standard library instead of external curl?
+    subprocess.check_call(["curl", "-gsLRO", url], cwd=cwd)
+    return cwd / expected_downloaded_file_name
 
 
 def show_files(*files: str | Path, cwd=None) -> None:
     """Like 'ls -ld'"""
     # TODO Use Python standard library instead of external command
-    check_call(["ls", "-ld", "--"] + list(map(str, files)), cwd=cwd)
+    subprocess.check_call(["ls", "-ld", "--"] + list(map(str, files)), cwd=cwd)
+
+
+def unzip(zip_file: str | Path, /, *, destination_directory: str | Path = None) -> None:
+    """Unzip a file"""
+    with zipfile.ZipFile(zip_file) as f:
+        f.extractall(path=destination_directory)
