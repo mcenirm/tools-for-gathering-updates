@@ -1,4 +1,5 @@
 """Assorted helpers"""
+
 import datetime
 import itertools
 import os
@@ -7,6 +8,8 @@ import zipfile
 from pathlib import Path
 from typing import Callable, Iterable
 from urllib.parse import urlparse
+
+import settings
 
 
 def ensure_directory(target: str | Path, /) -> Path:
@@ -100,3 +103,9 @@ def file_is_older_than(
 ) -> bool:
     """Is file older than expiry?"""
     return compare_file_time_to_expiry(f, float.__lt__, expiry, st_property=st_property)
+
+
+def prepare_for_downloads(component_name: str) -> Path:
+    """Return a destiation directory for the named component's downloads"""
+    # TODO maybe separate directories for each component?
+    return ensure_directory(settings.downloads)
