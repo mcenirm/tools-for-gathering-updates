@@ -1,6 +1,7 @@
 """Assorted helpers"""
 
 import datetime
+import enum
 import itertools
 import os
 import subprocess
@@ -105,7 +106,21 @@ def file_is_older_than(
     return compare_file_time_to_expiry(f, float.__lt__, expiry, st_property=st_property)
 
 
-def prepare_for_downloads(component_name: str) -> Path:
-    """Return a destiation directory for the named component's downloads"""
+class DownloadCategory(enum.Enum):
+    """Download categories"""
+
+    DOWNLOAD = settings.downloads
+    UPDATE = settings.updates
+
+    def __init__(self, destination_directory: Path) -> None:
+        self.destination_directory = destination_directory
+
+
+def prepare_for_downloads(
+    component_name: str,
+    *,
+    category: DownloadCategory = DownloadCategory.DOWNLOAD,
+) -> Path:
+    """Return a destination directory for the named component's downloads"""
     # TODO maybe separate directories for each component?
-    return ensure_directory(settings.downloads)
+    return ensure_directory(category.destination_directory)

@@ -83,10 +83,10 @@ rhino7_release_notification_url = (
 rhino7_download_latest_url = "https://www.rhino3d.com/download/rhino/latest"
 
 ## Nessus
-nessus_updates_dir = f"{updates}/nessus"
+nessus_updates_dir = updates / "nessus"
 nessus_plugin_dir_prefix = "nessus-plugin-set-"
 nessus_plugin_details_file = (
-    f"{nessus_updates_dir}/{nessus_plugin_dir_prefix}details.bash"
+    nessus_updates_dir / f"{nessus_plugin_dir_prefix}details.bash"
 )
 #
 nessus_plugin_file_name = "all-2.0.tar.gz"
