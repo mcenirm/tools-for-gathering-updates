@@ -124,3 +124,23 @@ def prepare_for_downloads(
     """Return a destination directory for the named component's downloads"""
     # TODO maybe separate directories for each component?
     return ensure_directory(category.destination_directory)
+
+
+def metadata_using_exiftool(path: str | Path) -> dict[str, str]:
+    """Extract metadata using exiftool"""
+    exiftool_output = subprocess.check_output(
+        ["exiftool", "-S", "-s", "-TimeStamp", "--", str(path)],
+        env=dict(TZ="UTC"),
+        encoding="utf-8",
+    )
+    exiftool_lines = exiftool_output.splitlines()
+    metadata = {}
+    for i, line in enumerate(exiftool_lines):
+        parts = line.split(":", maxsplit=1)
+        if len(parts) == 2:
+            name = parts[0].strip()
+            value = parts[1].strip()
+            metadata[name] = value
+        else:
+            raise ValueError("unexpected exiftool format", path, i, line)
+    return metadata

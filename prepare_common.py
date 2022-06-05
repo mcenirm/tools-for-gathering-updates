@@ -1,63 +1,42 @@
-# initialize setup for a DVD
-# parameters:
-#   - tag
-#   - label
-#   - [item...]
-# example call:  _dvd_init weekly 'Weekly Security' 'AV signatures' 'Nessus plugin'
-_dvd_init () {
-  local tag=''
-  if [ $# -gt 1 ]
-  then
-    tag=$1
-    shift
-  fi
-  if [ -z "$tag" ]
-  then
-    echo >&2 "ERROR: '_dvd_init' called with empty tag from: ${BASH_SOURCE[1]}"
-    return 1
-  fi
+"""DVD preparation tools"""
 
-  local label=''
-  if [ $# -gt 1 ]
-  then
-    label=$1
-    shift
-  fi
-  if [ -z "$label" ]
-  then
-    echo >&2 "ERROR: '_dvd_init' called with empty label from: ${BASH_SOURCE[1]}"
-    exit 1
-  fi
+import datetime
+import shutil
+import sys
 
-  # global variables
-  dvd_tag=$tag
-  dvd_label=$label
-  dvd_date=$(date -u +%Y%m%d)
-  dvd_dir=$dvds/dvd-$dvd_date-$tag
-  dvd_install_instructions=$dvd_dir/INSTALL.txt
-  dvd_burn_and_scan_instructions=$dvd_dir-BURN_AND_SCAN.txt
-  dvd_scan_report=$dvd_dir-scan.log
+import helpers
+import settings
 
-  # sanity checks
-  if [ -d "$dvd_dir" ]
-  then
-    echo >&2 "ERROR: target DVD directory already exists: $dvd_dir"
-    exit 1
-  fi
 
-  # build dvd tree
-  mkdir -pv -- "$dvd_dir"
+class DVD:
+    """DVD preparation class"""
 
-  # prepare burn and scan instructions
-  cat > "$dvd_burn_and_scan_instructions" <<EOF
+    def __init__(self, tag: str, label: str, *items: str):
+        self.tag = tag
+        self.label = label
+        self.items = [_ for _ in items]
+        self.date = datetime.date.today().strftime("%Y%m%d")
+        self.dir = settings.dvds / f"dvd-{self.date}-{tag}"
+        self.install_instructions = self.dir / "INSTALL.txt"
+        self.burn_and_scan_instructions = f"{self.dir}-BURN_AND_SCAN.txt"
+        self.scan_report = f"{self.dir}-scan.log"
+
+        if self.dir.exists():
+            raise ValueError("target DVD directory already exists", self.dir)
+        helpers.ensure_directory(self.dir)
+
+        # prepare burn and scan instructions
+        with open(self.burn_and_scan_instructions, "w", encoding="utf-8") as f:
+            f.write(
+                f"""
 
 1.  Insert a blank DVD in the optical drive.
 
 2.  Burn the folder to the disc.
 
-    growisofs -dvd-compat -Z "$dvd_device" -verbose \\
+    growisofs -dvd-compat -Z {repr(str(settings.dvd_device))} -verbose \\
         -iso-level 4 -joliet -joliet-long -rational-rock -udf \\
-        "$dvd_dir"
+        {repr(str(self.dir))}
 
 3.  Wait for the disc ejection after the burning completes.
 
@@ -65,27 +44,38 @@ _dvd_init () {
 
 5.  As root, mount the DVD contents.
 
-    mount -v -o ro -- "$dvd_device" "$dvd_mountpoint"
+    mount -v -o ro -- {repr(str(settings.dvd_device))} {repr(str(settings.dvd_mountpoint))}
 
 6.  As non-root, run the scan.
 
-    (cd -- "$dvd_mountpoint" && clamscan -v -a -r --log="$dvd_scan_report" .)
+    (cd -- {repr(str(settings.dvd_mountpoint))} && clamscan -v -a -r --log={repr(str(self.scan_report))} .)
 
 7.  As root, unmount and eject the disc.
 
-    eject -v -- "$dvd_mountpoint"
+    eject -v -- {repr(str(settings.dvd_mountpoint))}
 
 8.  Label the DVD.
 
-    $dvd_label  $dvd_date
-EOF
-  if [ $# -gt 0 ]
-  then
-    for item in "$@"
-    do
-      echo "    - $item" >> "$dvd_burn_and_scan_instructions"
-    done
-  fi
-  echo >> "$dvd_burn_and_scan_instructions"
+    {self.label}  {self.date}
+"""
+            )
+        for item in self.items:
+            print(f"    - {item}", file=f)
+        print(file=f)
 
-}
+    def show_instructions(self) -> None:
+        """Show the instructions for this DVD"""
+        with open(self.install_instructions, encoding="utf-8") as f:
+            print("---------- Installation instructions -----------------------")
+            shutil.copyfileobj(f, sys.stdout)
+            print("------------------------------------------------------------")
+        print()
+        with open(self.burn_and_scan_instructions, encoding="utf-8") as f:
+            print("---------- Burn and scan instructions ----------------------")
+            shutil.copyfileobj(f, sys.stdout)
+            print("------------------------------------------------------------")
+
+    def append_to_install_instructions(self, message: str) -> None:
+        """Append installation instructions"""
+        with open(self.install_instructions, "a", encoding="utf-8") as f:
+            print(message, file=f)

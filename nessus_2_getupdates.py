@@ -29,9 +29,9 @@ details_out = open(
     encoding="utf-8",
 )
 with details_out, contextlib.redirect_stdout(details_out):
-    print(f"nessus_plugin_latest_version={repr(str(nessus_plugin_latest_version))}")
-    print(f"nessus_plugin_file_downloaded={repr(str(nessus_plugin_file_downloaded))}")
-    print(f"nessus_plugin_dir={repr(str(nessus_plugin_dir))}")
-    print(f"nessus_plugin_name={repr(str(nessus_plugin_name))}")
+    print(f"nessus_plugin_latest_version={nessus_plugin_latest_version}")
+    print(f"nessus_plugin_file_downloaded={nessus_plugin_file_downloaded}")
+    print(f"nessus_plugin_dir={nessus_plugin_dir}")
+    print(f"nessus_plugin_name={nessus_plugin_name}")
 
 helpers.show_files(nessus_plugin_file_downloaded)

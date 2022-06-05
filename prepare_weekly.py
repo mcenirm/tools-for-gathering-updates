@@ -1,47 +1,65 @@
-#!/bin/bash
-set -euo pipefail
+"""Prepare weekly security updates DVD"""
 
-. "$(dirname -- "$BASH_SOURCE")"/settings.py
-. "$here"/prepare_common.py
+import pathlib
+import shutil
+import subprocess
+import sys
 
-_dvd_init weekly 'Weekly Security' 'AV signatures' 'Nessus plugin'
+import helpers
+import settings
+from prepare_common import DVD
+
+weekly_dvd = DVD("weekly", "Weekly Security", "AV signatures", "Nessus plugin")
 
 # get updates
 
-$here/wsusoffline_2_getupdates.py
-mpamfe_file_name=mpam-fe.exe
-mpamfe_file=$wsusoffline_client_dir/wddefs/x64-glb/$mpamfe_file_name
-mpamfe_version=$(exiftool -S -s -ProductVersionNumber -- "$mpamfe_file")
-mpamfe_date=$(TZ=UTC exiftool -S -s -TimeStamp -- "$mpamfe_file" | sed -e 's/ .*$//' -e 's/:/-/g')
-mpamfe_dir_name=windows-defender-$mpamfe_date-$mpamfe_version
-mpamfe_dvd_dir=$dvd_dir/$mpamfe_dir_name
+subprocess.check_call(sys.executable, "wsusoffline_2_getupdates.py")
 
-$here/nessus_2_getupdates.py
-. "$nessus_plugin_details_file"
-nessus_dvd_dir=$dvd_dir/$nessus_plugin_name
+mpamfe_file_name = "mpam-fe.exe"
+mpamfe_file = settings.wsusoffline_client_dir / f"wddefs/x64-glb/{mpamfe_file_name}"
+mpamfe_metadata = helpers.metadata_using_exiftool(mpamfe_file)
+mpamfe_version = mpamfe_metadata["ProductVersionNumber"]
+mpamfe_date = mpamfe_metadata["TimeStamp"].split()[0].replace(":", "-")
+mpamfe_dir_name = f"windows-defender-{mpamfe_date}-{mpamfe_version}"
+
+subprocess.check_call(sys.executable, "nessus_2_getupdates.py")
+nessus_details = {}
+with open(settings.nessus_plugin_details_file, encoding="utf-8") as f:
+    for line in f:
+        key, value = line.split("=", maxsplit=1)
+        nessus_details[key.strip()] = value.strip()
 
 # add contents to DVD folder
-
-mkdir -pv -- "$mpamfe_dvd_dir"
-cp -pv -- "$mpamfe_file" "$mpamfe_dvd_dir/"
-cat >> "$dvd_install_instructions" <<EOF
+mpamfe_dvd_dir = helpers.ensure_directory(weekly_dvd.dir / mpamfe_dir_name)
+shutil.copy2(mpamfe_file, mpamfe_dvd_dir)
+mpamfe_exe_windows_path = pathlib.PureWindowsPath(mpamfe_dir_name, mpamfe_file_name)
+weekly_dvd.append_to_install_instructions(
+    f"""
 
 # Update the Windows Defender definitions
 
 1. Open an admin PowerShell, change to the optical drive, and run the command:
 
-    & '$mpamfe_dir_name\\$mpamfe_file_name' -q
+    & '{mpamfe_exe_windows_path}' -q
 
 2. Verify the definition date in Windows Security
    ("Virus & threat protection", "Virus & threat protection updates")
 
 Note: The GUI takes a few minutes before it shows the new definition date / version.
 
-EOF
+"""
+)
 
-mkdir -pv -- "$nessus_dvd_dir"
-cp -pv -- "$nessus_plugin_file_downloaded" "$nessus_dvd_dir/"
-cat >> "$dvd_install_instructions" <<EOF
+nessus_dvd_dir = helpers.ensure_directory(
+    weekly_dvd.dir / nessus_details["nessus_plugin_name"]
+)
+shutil.copy2(nessus_details["nessus_plugin_file_downloaded"], nessus_dvd_dir)
+nessus_plugin_set_windows_path = pathlib.PureWindowsPath(
+    nessus_details["nessus_plugin_name"],
+    nessus_details["nessus_plugin_file_name"],
+)
+weekly_dvd.append_to_install_instructions(
+    f"""
 
 # Nessus plugin set
 
@@ -59,7 +77,7 @@ Update the Nessus plugin set:
 
 6. "Continue" (button)
 
-7. Browse to "$nessus_plugin_name\\$nessus_plugin_file_name" and "Open"
+7. Browse to "{nessus_plugin_set_windows_path}" and "Open"
 
 8. TODO Document the behavior (eg, the spinner bottom left)
 
@@ -69,17 +87,10 @@ Update the Nessus plugin set:
 
 11. Every 5 minutes, refresh the page until "Plugin Set" (right side) matches the new version.
 
-EOF
+"""
+)
 
-cat <<EOF
----------- Installation instructions -----------------------
-$(cat -- "$dvd_install_instructions")
-------------------------------------------------------------
-
----------- Burn and scan instructions ----------------------
-$(cat -- "$dvd_burn_and_scan_instructions")
-------------------------------------------------------------
-EOF
+weekly_dvd.show_instructions()
 
 
 # TODO
