@@ -1,38 +1,38 @@
-#!/bin/bash
-set -euo pipefail
+"""Prepare monthly security updates DVD"""
 
-. "$(dirname -- "$BASH_SOURCE")"/settings.py
-. "$here"/prepare_common.py
+import pathlib
+import shutil
+import subprocess
+import sys
 
-_dvd_init monthly 'Monthly Security' 'Windows updates'
+import helpers
+import settings
+from prepare_common import DVD
 
-$here/wsusoffline_2_getupdates.py
-$here/wsusoffline_3_prune_updates.py
+dvd = DVD("monthly", "Monthly Security", "Windows updates")
 
-wsusoffline_dvd_client_dir_name=wsusofflineclient
-wsusoffline_dvd_client_dir=$dvd_dir/$wsusoffline_dvd_client_dir_name
+subprocess.check_call(sys.executable, "wsusoffline_2_getupdates.py")
+subprocess.check_call(sys.executable, "wsusoffline_3_prune_updates.py")
 
-mkdir -pv -- "$wsusoffline_dvd_client_dir"
-cp -prT -- "$wsusoffline_client_dir" "$wsusoffline_dvd_client_dir"
+wsusoffline_dvd_client_dir_name = "wsusofflineclient"
+wsusoffline_dvd_client_dir = helpers.ensure_directory(
+    dvd.dir / wsusoffline_dvd_client_dir_name
+)
 
-cat > "$dvd_install_instructions" <<EOF
+shutil.copytree(settings.wsusoffline_client_dir, wsusoffline_dvd_client_dir)
+
+dvd.append_to_install_instructions(
+    f"""
 
 # Install Windows updates
 
 1. Open an admin PowerShell, change to the optical drive, and run the command:
 
-    & '$wsusoffline_dvd_client_dir_name\\UpdateInstaller.exe'
+    & '{pathlib.PureWindowsPath(wsusoffline_dvd_client_dir_name)}\\UpdateInstaller.exe'
 
 TODO document weird "screensaver" thing it does
 
-EOF
+"""
+)
 
-cat <<EOF
----------- Installation instructions -----------------------
-$(cat -- "$dvd_install_instructions")
-------------------------------------------------------------
-
----------- Burn and scan instructions ----------------------
-$(cat -- "$dvd_burn_and_scan_instructions")
-------------------------------------------------------------
-EOF
+dvd.show_instructions()
