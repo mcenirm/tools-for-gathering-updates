@@ -1,6 +1,6 @@
 """Download WSUS Offline Community Edition"""
 
-from subprocess import CalledProcessError, check_call
+import subprocess
 
 import helpers
 import settings
@@ -10,22 +10,20 @@ destination_directory = helpers.prepare_for_downloads("wsusoffline")
 
 def check_files() -> bool:
     """Run hashdeep on the downloaded WSUS Offline files"""
-    try:
-        check_call(
-            [
-                "hashdeep",
-                "-s",
-                "-a",
-                "-l",
-                "-k",
-                settings.wsusoffline_hashes_file,
-                settings.wsusoffline_zip_file,
-            ],
-            cwd=destination_directory,
-        )
-        return True
-    except CalledProcessError:
-        return False
+    completed_process = subprocess.run(
+        [
+            "hashdeep",
+            "-s",
+            "-a",
+            "-l",
+            "-k",
+            settings.wsusoffline_hashes_file,
+            settings.wsusoffline_zip_file,
+        ],
+        check=True,
+        cwd=destination_directory,
+    )
+    return 0 == completed_process.returncode
 
 
 if check_files():

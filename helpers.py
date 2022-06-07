@@ -50,7 +50,11 @@ def curl(
 def show_files(*files: str | Path, cwd=None) -> None:
     """Like 'ls -ld'"""
     # TODO Use Python standard library instead of external command
-    subprocess.check_call(["ls", "-ld", "--"] + list(map(str, files)), cwd=cwd)
+    subprocess.run(
+        ["ls", "-ld", "--"] + list(map(str, files)),
+        check=True,
+        cwd=cwd,
+    )
 
 
 def unzip(zip_file: str | Path, /, *, destination_directory: str | Path = None) -> None:

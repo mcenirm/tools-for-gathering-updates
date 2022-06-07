@@ -1,6 +1,6 @@
 """Install WSUS Offline"""
 
-from subprocess import check_call
+import subprocess
 
 import helpers
 import settings
@@ -16,7 +16,7 @@ helpers.unzip(
 # avoid pinging external system
 # TODO avoid pinging at all
 # TODO use python standard library instead of external sed
-check_call(
+subprocess.run(
     [
         "sed",
         "-i",
@@ -24,11 +24,16 @@ check_call(
         "s/ www.wsusoffline.net / localhost /",
         "common-tasks/40-configure-downloaders.bash",
     ],
+    check=True,
     cwd=CWD,
 )
 
-check_call(["bash", "fix-file-permissions.bash"], cwd=CWD)
+subprocess.run(["bash", "fix-file-permissions.bash"], check=True, cwd=CWD)
 
 for n in ["update-generator.ini", "windows-10-versions.ini"]:
     # TODO use python standard library instead of external cp
-    check_call(["cp", "-ipv", f"{settings.files}/wsusoffline-{n}", f"./{n}"], cwd=CWD)
+    subprocess.run(
+        ["cp", "-ipv", f"{settings.files}/wsusoffline-{n}", f"./{n}"],
+        check=True,
+        cwd=CWD,
+    )

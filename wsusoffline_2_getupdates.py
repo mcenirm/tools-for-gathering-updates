@@ -1,10 +1,9 @@
 """Use WSUS Offline to download updates from Microsoft"""
 
-import helpers
-
+import subprocess
 import sys
-from subprocess import check_call
 
+import helpers
 import settings
 
 options_message = """Options:
@@ -35,7 +34,7 @@ if ignore_timestamps:
         base_directory=settings.wsusoffline_updates_dir / "timestamps",
     )
 
-check_call(
+subprocess.run(
     [
         "./download-updates.bash",
         "w100-x64",
@@ -45,5 +44,6 @@ check_call(
         "-includedotnet",
         "-includewddefs",
     ],
+    check=True,
     cwd=CWD,
 )

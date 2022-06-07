@@ -13,7 +13,7 @@ weekly_dvd = DVD("weekly", "Weekly Security", "AV signatures", "Nessus plugin")
 
 # get updates
 
-subprocess.check_call([sys.executable, "wsusoffline_2_getupdates.py"])
+subprocess.run([sys.executable, "wsusoffline_2_getupdates.py"], check=True)
 
 mpamfe_file_name = "mpam-fe.exe"
 mpamfe_file = settings.wsusoffline_client_dir / f"wddefs/x64-glb/{mpamfe_file_name}"
@@ -22,7 +22,7 @@ mpamfe_version = mpamfe_metadata["ProductVersionNumber"]
 mpamfe_date = mpamfe_metadata["TimeStamp"].split()[0].replace(":", "-")
 mpamfe_dir_name = f"windows-defender-{mpamfe_date}-{mpamfe_version}"
 
-subprocess.check_call([sys.executable, "nessus_2_getupdates.py"])
+subprocess.run([sys.executable, "nessus_2_getupdates.py"], check=True)
 nessus_details = {}
 with open(settings.nessus_plugin_details_file, encoding="utf-8") as f:
     for line in f:

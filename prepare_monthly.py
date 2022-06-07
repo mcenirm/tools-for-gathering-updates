@@ -10,8 +10,8 @@ from prepare_common import DVD
 
 dvd = DVD("monthly", "Monthly Security", "Windows updates")
 
-subprocess.check_call([sys.executable, "wsusoffline_2_getupdates.py"])
-subprocess.check_call([sys.executable, "wsusoffline_3_prune_updates.py"])
+subprocess.run([sys.executable, "wsusoffline_2_getupdates.py"], check=True)
+subprocess.run([sys.executable, "wsusoffline_3_prune_updates.py"], check=True)
 
 wsusoffline_dvd_client_dir_name = "wsusofflineclient"
 

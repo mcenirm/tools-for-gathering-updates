@@ -1,7 +1,7 @@
 """Download Rhino 7"""
 
 import io
-from subprocess import CalledProcessError, check_call
+import subprocess
 
 import helpers
 import settings
@@ -12,16 +12,15 @@ destination_directory = helpers.prepare_for_downloads("wsusoffline")
 def check_file() -> bool:
     """Run sha256sum on the downloaded Rhino 7 file"""
     # TODO use Python standard library instead of extern sha256sum
-    checksum_input = io.StringIO(
-        f"{settings.rhino7_installer_sha256}  {settings.rhino7_installer_file}\n"
+    checksum_input = (
+        settings.rhino7_installer_sha256 + "  " + settings.rhino7_installer_file + "\n"
+    ).encode("utf-8")
+    completed_process = subprocess.run(
+        ["sha256sum", "-c", "-"],
+        cwd=destination_directory,
+        input=checksum_input,
     )
-    try:
-        check_call(
-            ["sha256sum", "-c", "-"], cwd=destination_directory, stdin=checksum_input
-        )
-        return True
-    except CalledProcessError:
-        return False
+    return 0 == completed_process.returncode
 
 
 if check_file():
