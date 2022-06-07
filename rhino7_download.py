@@ -30,7 +30,8 @@ if check_file():
 else:
     # try to download it
     local_copy = helpers.curl(
-        settings.rhino7_installer_url, destination_directory=destination_directory
+        settings.rhino7_installer_url,
+        downloaded_file_path=destination_directory / settings.rhino7_installer_file,
     )
     helpers.show_files(local_copy)
 

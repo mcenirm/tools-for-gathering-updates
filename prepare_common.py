@@ -59,9 +59,9 @@ class DVD:
     {self.label}  {self.date}
 """
             )
-        for item in self.items:
-            print(f"    - {item}", file=f)
-        print(file=f)
+            for item in self.items:
+                print(f"    - {item}", file=f)
+            print(file=f)
 
     def show_instructions(self) -> None:
         """Show the instructions for this DVD"""

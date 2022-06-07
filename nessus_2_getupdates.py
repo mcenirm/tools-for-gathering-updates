@@ -19,7 +19,7 @@ nessus_plugin_file_downloaded = nessus_plugin_dir / settings.nessus_plugin_file_
 if not nessus_plugin_file_downloaded.exists():
     destination_directory = helpers.ensure_directory(nessus_plugin_dir)
     downloaded_file = helpers.curl(
-        settings.nessus_plugin_url, destination_directory=destination_directory
+        settings.nessus_plugin_url, downloaded_file_path=nessus_plugin_file_downloaded
     )
     downloaded_file.rename(nessus_plugin_file_downloaded)
 

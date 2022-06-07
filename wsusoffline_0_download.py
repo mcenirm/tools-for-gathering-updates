@@ -33,8 +33,14 @@ if check_files():
     ...
 else:
     # try to download them
-    for u in [settings.wsusoffline_hashes_url, settings.wsusoffline_zip_url]:
-        local_copy = helpers.curl(u, destination_directory=destination_directory)
+    for filename, url in [
+        (settings.wsusoffline_hashes_file, settings.wsusoffline_hashes_url),
+        (settings.wsusoffline_zip_file, settings.wsusoffline_zip_url),
+    ]:
+        local_copy = helpers.curl(
+            url,
+            downloaded_file_path=destination_directory / filename,
+        )
         helpers.show_files(local_copy)
 
     # check again

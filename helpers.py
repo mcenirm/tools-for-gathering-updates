@@ -8,7 +8,6 @@ import subprocess
 import zipfile
 from pathlib import Path
 from typing import Callable, Iterable
-from urllib.parse import urlparse
 
 import settings
 
@@ -20,14 +19,32 @@ def ensure_directory(target: str | Path, /) -> Path:
     return target
 
 
-def curl(url: str, /, *, destination_directory: str | Path = None) -> Path:
+def curl(
+    url: str,
+    /,
+    *,
+    downloaded_file_path: Path = None,
+) -> Path:
     """Download a file without a lot of fuss"""
-    expected_downloaded_file_name = Path(urlparse(url).path).name
     # TODO Use Python standard library instead of external curl?
-    subprocess.check_call(["curl", "-gsLRO", url], cwd=destination_directory)
-    if destination_directory is None:
-        destination_directory = "."
-    return Path(destination_directory) / expected_downloaded_file_name
+    args = ["curl", "--write-out", r"%{filename_effective}\n", "-gsLR"]
+    if downloaded_file_path is None:
+        destination_directory = Path(".")
+        args += ["--remote-header-name", "--remote-name-all"]
+    else:
+        destination_directory = downloaded_file_path.parent
+        args += ["-o", str(downloaded_file_path)]
+    args += [url]
+    effective_filenames = subprocess.check_output(
+        args,
+        cwd=destination_directory,
+        encoding="utf-8",
+    ).splitlines()
+    if not effective_filenames:
+        raise ValueError(
+            "no effective filenames reported from curl", url, downloaded_file_path
+        )
+    return destination_directory / effective_filenames[0]
 
 
 def show_files(*files: str | Path, cwd=None) -> None:
@@ -88,22 +105,27 @@ def compare_file_time_to_expiry(
     comparison: Callable[[float, float], bool],
     expiry: datetime.datetime,
     *,
-    st_property: property = os.stat_result.st_mtime,
+    st_time_property: property = os.stat_result.st_mtime,
 ) -> bool:
     """Compare file's mtime to expiry using comparison"""
-    return comparison(
-        datetime.datetime.fromtimestamp(st_property.fget(Path(f).stat())), expiry
-    )
+    filestats = Path(f).stat()
+    filetime = st_time_property.__get__(filestats)
+    return comparison(filetime, expiry.timestamp())
 
 
 def file_is_older_than(
     f: str | Path,
     expiry: datetime.datetime,
     *,
-    st_property: property = os.stat_result.st_mtime,
+    st_time_property: property = os.stat_result.st_mtime,
 ) -> bool:
     """Is file older than expiry?"""
-    return compare_file_time_to_expiry(f, float.__lt__, expiry, st_property=st_property)
+    return compare_file_time_to_expiry(
+        f,
+        float.__lt__,
+        expiry,
+        st_time_property=st_time_property,
+    )
 
 
 class DownloadCategory(enum.Enum):
@@ -129,7 +151,7 @@ def prepare_for_downloads(
 def metadata_using_exiftool(path: str | Path) -> dict[str, str]:
     """Extract metadata using exiftool"""
     exiftool_output = subprocess.check_output(
-        ["exiftool", "-S", "-s", "-TimeStamp", "--", str(path)],
+        ["exiftool", "-S", "--", str(path)],
         env=dict(TZ="UTC"),
         encoding="utf-8",
     )
