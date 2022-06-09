@@ -3,6 +3,17 @@ local_settings.*
 local-settings.*
 
 
+# legacy wrappers
+nessus-2-getupdates.bash
+prepare-monthly.bash
+prepare-weekly.bash
+rhino7-download.bash
+wsusoffline-0-download.bash
+wsusoffline-1-install.bash
+wsusoffline-2-getupdates.bash
+wsusoffline-3-prune-updates.bash
+
+
 # TODO decide if we should not ignore this?
 .vscode/
 
