@@ -10,6 +10,7 @@ here = Path(__file__).parent
 files = here / "files"
 
 base = here.parent
+clones = base / "clones"
 downloads = base / "downloads"
 updates = base / "updates"
 dvds = base / "dvds"
@@ -32,7 +33,14 @@ wsusoffline_zip_url = (
     f"{wsusoffline_uploads_url}/{wsusoffline_zip_gitlabdiskhash}/{wsusoffline_zip_file}"
 )
 wsusoffline_hashes_file = f"{wsusoffline_release_name}_hashes.txt"
-wsusoffline_hashes_url = f"{wsusoffline_uploads_url}/{wsusoffline_hashes_gitlabdiskhash}/{wsusoffline_hashes_file}"
+wsusoffline_hashes_url = "/".join(
+    (
+        wsusoffline_uploads_url,
+        wsusoffline_hashes_gitlabdiskhash,
+        wsusoffline_hashes_file,
+    )
+)
+wsusoffline_git_url = f"{wsusoffline_base_url}.git"
 
 ## Microsoft updates that should not be copied to DVD
 kb_ignores = {
