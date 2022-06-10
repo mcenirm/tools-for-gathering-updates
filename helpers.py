@@ -1,10 +1,12 @@
 """Assorted helpers"""
 
+import dataclasses
 import datetime
 import enum
 import itertools
 import os
 import subprocess
+import urllib.parse
 import zipfile
 from pathlib import Path
 from typing import Callable, Iterable
@@ -170,3 +172,58 @@ def metadata_using_exiftool(path: str | Path) -> dict[str, str]:
         else:
             raise ValueError("unexpected exiftool format", path, i, line)
     return metadata
+
+
+@dataclasses.dataclass
+class GitCloneDetails:
+    """Details for a successfully cloned git repository"""
+
+    path: Path
+    remote_url: str
+    initial_branch: str
+
+
+DOT_GIT = ".git"
+
+
+def git_url_basename(git_url: str) -> str:
+    """Mimic git clone method for determining the name of the work dir"""
+    path = Path(urllib.parse.urlparse(git_url).path)
+    if path.name == DOT_GIT:
+        path = path.parent
+    elif path.suffix == DOT_GIT:
+        path = path.with_suffix("")
+    return path.name
+
+
+def git_branch_show_current(work_dir: str | Path) -> str:
+    """Return the name of the current branch in the checked out working directory"""
+    completed_process = subprocess.run(
+        "git rev-parse --abbrev-ref HEAD".split(),
+        check=True,
+        capture_output=True,
+        cwd=work_dir,
+    )
+    branch_name = completed_process.stdout.decode("utf-8").strip()
+    return branch_name
+
+
+def git_clone(
+    repo: str,
+    /,
+    work_dir: str | Path = None,
+    branch: str = None,
+) -> GitCloneDetails:
+    """Clone a git repository"""
+    if not work_dir:
+        work_dir = Path(git_url_basename(repo))
+    if not isinstance(work_dir, Path):
+        work_dir = Path(work_dir)
+    cmd = ["git", "clone"]
+    if branch:
+        cmd += ["--branch", branch]
+    cmd += [repo, str(work_dir)]
+    subprocess.run(cmd, check=True)
+    if not branch:
+        branch = git_branch_show_current(work_dir)
+    return GitCloneDetails(work_dir, repo, branch)

@@ -1,6 +1,7 @@
 """Unit tests for helpers.py"""
 import contextlib
 import io
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -60,6 +61,73 @@ class RmVTests(unittest.TestCase):
             "".join((f"removed {repr(str(_))}\n" for _ in self.relative_paths)),
         )
         self.assertEqual(self.mock_unlink.call_count, len(self.relative_paths))
+
+
+class GitTests(unittest.TestCase):
+    """Test git-related helpers"""
+
+    ANONYMITY_NAME = "Example Nobody"
+    ANONYMITY_EMAIL = "nobody@example.com"
+    ANONYMITY_ENV = dict(
+        GIT_AUTHOR_NAME=ANONYMITY_NAME,
+        GIT_AUTHOR_EMAIL=ANONYMITY_EMAIL,
+        GIT_COMMITTER_NAME=ANONYMITY_NAME,
+        GIT_COMMITTER_EMAIL=ANONYMITY_EMAIL,
+    )
+
+    @staticmethod
+    def _run_git(git_args: list[str], **kwargs) -> subprocess.CompletedProcess:
+        # avoid modifying original kwargs
+        kwargs = dict(kwargs)
+        env = GitTests.ANONYMITY_ENV | kwargs.pop("env", {})
+        check = kwargs.pop("check", True)
+        return subprocess.run(["git"] + git_args, check=check, env=env, **kwargs)
+
+    @staticmethod
+    def _init_and_commit(work_dir: Path, initial_branch: str):
+        work_dir.mkdir(parents=True, exist_ok=True)
+        for args in [
+            ["init"],
+            ["checkout", "-b", initial_branch],
+            ["commit", "--allow-empty", "-n", "-m", "initial"],
+        ]:
+            GitTests._run_git(args, cwd=work_dir)
+
+    def test_git_url_basename(self):
+        """Test git_url_basename
+
+        Some test data is from header doc for git_url_basename in git source code
+        """
+        for git_url, expected_basename in [
+            ("/path/to/repo.git", "repo"),
+            ("host.xz:foo/.git", "foo"),
+            ("http://example.com/user/bar.baz", "bar.baz"),
+            ("git@example.com:user/foo.git", "foo"),
+            ("https://example.com/user/foo.git", "foo"),
+        ]:
+            with self.subTest():
+                self.assertEqual(
+                    expected_basename, helpers.git_url_basename(git_url), git_url
+                )
+
+    def test_git_branch_show_current(self):
+        """Test git_branch_show_current"""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            branch_name = "something-other-than-the-default"
+            GitTests._init_and_commit(Path(tmpdir), branch_name)
+            self.assertEqual(branch_name, helpers.git_branch_show_current(tmpdir))
+
+    def test_git_clone(self):
+        """Test git_clone"""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            origin = Path(tmpdir, "origin")
+            cloned = Path(tmpdir, "cloned")
+            branch_name = "main"
+            GitTests._init_and_commit(origin, branch_name)
+            details = helpers.git_clone(str(origin), work_dir=cloned)
+            self.assertEqual(cloned, details.path)
+            self.assertEqual(origin, Path(details.remote_url))
+            self.assertEqual(branch_name, details.initial_branch)
 
 
 if __name__ == "__main__":
