@@ -76,10 +76,10 @@ kb_ignores = {
 }
 
 ## Rhino3D 7
-rhino7_release_date = "20220504"
-rhino7_version_full = "7.18.22124.03001"
+rhino7_release_date = "20220614"
+rhino7_version_full = "7.19.22165.13001"
 rhino7_installer_sha256 = (
-    "3c654c23e24f7383c01ad23d610ad6784f45e4824a36ffe537c1c3898afe4148"
+    "94a94dc0d839cf2b5931a2450a5143638bedf8c53f66c1546d7c86b58469b05a"
 )
 rhino7_installer_file = f"rhino_en-us_{rhino7_version_full}.exe"
 rhino7_installer_url = (
