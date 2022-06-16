@@ -115,6 +115,14 @@ Notes on `growisofs {-Z,-M}` and its `mkisofs`/`genisoimage` backend:
    growisofs -dvd-compat -Z /dev/sr1 -verbose -iso-level 4 -joliet -joliet-long -rational-rock -udf $FOLDER_WITH_FILES
    ```
 
+More optical drive details can be shown using `cd-drive` (from `libcdio` package on Fedora/RHEL).
+
+* Can it do dual/double-layer DVD?
+
+```shell
+cd-drive --cdrom-device=/dev/sr1 | grep -i double
+```
+
 
 ## weekly updates
 
