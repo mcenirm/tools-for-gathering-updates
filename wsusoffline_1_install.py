@@ -1,5 +1,8 @@
 """Install WSUS Offline"""
 
+import pathlib
+import shlex
+import shutil
 import subprocess
 
 import helpers
@@ -28,12 +31,22 @@ subprocess.run(
     cwd=CWD,
 )
 
-subprocess.run(["bash", "fix-file-permissions.bash"], check=True, cwd=CWD)
+for dst, names in {
+    "": [
+        "update-generator.ini",
+        "windows-10-versions.ini",
+    ],
+    "../client/static/custom": [
+        "StaticUpdateIds-servicing-w100-19042.txt",
+        "StaticUpdateIds-servicing-w100-19043.txt",
+        "StaticUpdateIds-servicing-w100-19044.txt",
+    ],
+}.items():
+    dst = CWD / dst
+    assert dst.is_dir()
+    for name in names:
+        src = settings.files / "files-for-wsusoffline" / name
+        newpath = shutil.copy2(src=src, dst=dst)
+        print(shlex.quote(str(src)), "->", shlex.quote(str(newpath)))
 
-for n in ["update-generator.ini", "windows-10-versions.ini"]:
-    # TODO use python standard library instead of external cp
-    subprocess.run(
-        ["cp", "-ipv", f"{settings.files}/wsusoffline-{n}", f"./{n}"],
-        check=True,
-        cwd=CWD,
-    )
+subprocess.run(["bash", "fix-file-permissions.bash"], check=True, cwd=CWD)
