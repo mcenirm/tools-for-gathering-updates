@@ -227,3 +227,20 @@ def git_clone(
     if not branch:
         branch = git_branch_show_current(work_dir)
     return GitCloneDetails(work_dir, repo, branch)
+
+
+def parse_isoz_datetime(isoz: str) -> datetime.datetime:
+    # TODO use 3rd party dateutil.parser.isoparse
+    if isoz[-1].lower() == "z":
+        isoz = isoz[:-1] + "+00:00"
+    return datetime.datetime.fromisoformat(isoz)
+
+
+def xmlns(cls=None, /, *, uri: str):
+    def wrapper(cls):
+        for n, t in getattr(cls, "__annotations__", {}).items():
+            setattr(cls, n, "{" + uri + "}" + n)
+        cls._uri = uri
+        return cls
+
+    return wrapper if cls is None else wrapper(cls)
