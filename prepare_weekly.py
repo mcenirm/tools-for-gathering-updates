@@ -20,7 +20,7 @@ mpamfe_file = settings.wsusoffline_client_dir / f"wddefs/x64-glb/{mpamfe_file_na
 mpamfe_metadata = helpers.metadata_using_exiftool(mpamfe_file)
 mpamfe_version = mpamfe_metadata["ProductVersionNumber"]
 mpamfe_date = mpamfe_metadata["TimeStamp"].split()[0].replace(":", "-")
-mpamfe_dir_name = f"windows-defender-{mpamfe_date}-{mpamfe_version}"
+mpamfe_dir_name = f"microsoft-defender-{mpamfe_date}-{mpamfe_version}"
 
 subprocess.run([sys.executable, "nessus_2_getupdates.py"], check=True)
 nessus_details = {}
@@ -59,7 +59,7 @@ nessus_plugin_set_windows_path = pathlib.PureWindowsPath(
     settings.nessus_plugin_file_name,
 )
 weekly_dvd.append_to_install_instructions(
-    f"""
+    rf"""
 
 # Nessus plugin set
 
@@ -86,6 +86,10 @@ Update the Nessus plugin set:
 10. Wait about 20 minutes. (This is a good time to run the Windows Defender full scan.)
 
 11. Every 5 minutes, refresh the page until "Plugin Set" (right side) matches the new version.
+
+Note: The following (admin) PowerShell command will monitor the Nessus status.
+
+    Get-Content -Wait -Tail 5 'C:\ProgramData\Tenable\Nessus\nessus\logs\nessusd.messages'
 
 """
 )
