@@ -36,6 +36,11 @@ def curl(
     else:
         destination_directory = downloaded_file_path.parent
         args += ["-o", str(downloaded_file_path)]
+    if not destination_directory.exists():
+        raise FileNotFoundError(
+            "download destination directory",
+            destination_directory,
+        )
     args += [url]
     effective_filenames = subprocess.check_output(
         args,
