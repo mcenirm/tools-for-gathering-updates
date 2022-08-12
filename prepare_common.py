@@ -4,7 +4,7 @@ import datetime
 import shutil
 import sys
 
-import helpers
+import kits.helpers as helpers
 import settings
 
 

@@ -3,7 +3,7 @@
 import contextlib
 from urllib.request import urlopen
 
-import helpers
+import kits.helpers as helpers
 import settings
 
 # get latest plugin set version

@@ -5,7 +5,7 @@ import shlex
 import shutil
 import subprocess
 
-import helpers
+import kits.helpers as helpers
 import settings
 
 helpers.ensure_directory(settings.updates)

@@ -3,7 +3,7 @@
 import io
 import subprocess
 
-import helpers
+import kits.helpers as helpers
 import settings
 
 destination_directory = helpers.prepare_for_downloads("wsusoffline")

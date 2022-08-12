@@ -3,7 +3,7 @@
 import datetime
 import functools
 
-import helpers
+import kits.helpers as helpers
 import settings
 
 # remove update files for KB numbers that we ignore

@@ -1,6 +1,6 @@
 """Install WSUS Offline"""
 
-import helpers
+import kits.helpers as helpers
 import settings
 
 helpers.ensure_directory(settings.clones)

@@ -3,7 +3,7 @@
 import subprocess
 import sys
 
-import helpers
+import kits.helpers as helpers
 import settings
 
 options_message = """Options:

@@ -5,7 +5,7 @@ import shutil
 import subprocess
 import sys
 
-import helpers
+import kits.helpers as helpers
 import settings
 from prepare_common import DVD
 
