@@ -7,12 +7,12 @@ import pathlib
 import typing
 import xml.etree.ElementTree as ET
 
+import helpers
+import settings
 from icecream import ic
 from rich import inspect as ri
 
-import helpers
-import settings
-from msrc_settings import (
+from .msrc_settings import (
     MSRC_API_DOWNLOAD_AGE_THRESHOLD,
     MSRC_API_RELEASE_AGE_THRESHOLD,
     MSRC_API_UPDATE_DOWNLOAD_FMT,
