@@ -7,10 +7,20 @@ import pathlib
 import typing
 import xml.etree.ElementTree as ET
 
-import kits.cvrf as cvrf
 import kits.helpers as helpers
 import settings
 from icecream import ic
+from kits.cvrf import (
+    CVRF_PROD_ATTR_NAME,
+    CVRF_PROD_ATTR_PRODUCT_ID,
+    CVRF_PROD_ATTR_TYPE,
+    CvrfNS,
+    CvrfProdNS,
+    CvrfVulnNS,
+    Revision,
+)
+from kits.xml import ElementTreeParentMap as ParentMap
+from kits.xml import short_tag
 from rich import inspect as ri
 
 from .msrc_settings import (
@@ -150,8 +160,7 @@ def cvrf_get_product_id(
 
 
 def gloam(tag: str, value: str, indent_level: int = 0, /) -> None:
-    short_tag = tag.split("}")[-1]
-    label = f"""{"  " * indent_level}{short_tag}:"""
+    label = f"""{"  " * indent_level}{short_tag(tag)}:"""
     msg = f"{label:24} {value}"
     print(msg)
 
@@ -162,19 +171,160 @@ if __name__ == "__main__":
     update_metadata_paths = download_updates_metadata()
     for ump in update_metadata_paths:
         tree = ET.parse(str(ump))
-        # parent_map = {c: p for p in tree.iter() for c in p}
-        cvrfdoc = cvrf.load_from_etree(tree=tree)
-        watching_product_ids = {
-            fpn.product_id
-            for fpn in cvrf_get_full_product_names(
-                cvrf_doc=root,
-                branch_chain=[microsoft_branch, windows_branch],
-            )
-            if fpn.full_product_name == "Windows 10 Version 21H2 for x64-based Systems"
-        }
-        ic(watching_product_ids)
+        parent_map = ParentMap(tree)
+        # cvrfdoc = cvrf.load_from_etree(tree=tree)
+        # watching_product_ids = {
+        #     fpn.product_id
+        #     for fpn in cvrf_get_full_product_names(
+        #         cvrf_doc=root,
+        #         branch_chain=[microsoft_branch, windows_branch],
+        #     )
+        #     if fpn.full_product_name == "Windows 10 Version 21H2 for x64-based Systems"
+        # }
+        # ic(watching_product_ids)
         # for p in cvrf_find_products(
         #     cvrf_doc=root, branch_chain=[], full_product_name=None
         # ):
         #     ic(p)
+        # break
+        cutoff = 10
+        for i, e in enumerate(tree.iter()):
+            match e.tag:
+                case CvrfNS.cvrfdoc:
+                    ...
+                case CvrfNS.Alias:
+                    ...
+                case CvrfNS.ContactDetails:
+                    ...
+                case CvrfNS.CurrentReleaseDate:
+                    ...
+                case CvrfNS.Date:
+                    ...
+                    # gloam(e.tag, e.text, 1)
+                    # for i, p in enumerate(parent_map.ancestors(e)):
+                    #     if p.tag != CvrfNS.cvrfdoc:
+                    #         gloam(p.tag, str([short_tag(c.tag) for c in p]), i + 1)
+                case CvrfNS.Description:
+                    ...
+                    # gloam(e.tag, e.text, 1)
+                case CvrfNS.DocumentNotes:
+                    ...
+                case CvrfNS.DocumentPublisher:
+                    ...
+                case CvrfNS.DocumentTitle:
+                    print(e.text)
+                case CvrfNS.DocumentTracking:
+                    ...
+                case CvrfNS.DocumentType:
+                    ...
+                case CvrfNS.ID:
+                    ...
+                case CvrfNS.Identification:
+                    ...
+                case CvrfNS.InitialReleaseDate:
+                    ...
+                case CvrfNS.IssuingAuthority:
+                    ...
+                case CvrfNS.Note:
+                    ...
+                case CvrfNS.Number:
+                    ...
+                    # gloam(e.tag, e.text, 1)
+                case CvrfNS.Revision:
+                    print(Revision.from_etree(e))
+                    # gloam(e.tag, "")
+                case CvrfNS.RevisionHistory:
+                    ...
+                case CvrfNS.Status:
+                    ...
+                case CvrfNS.Version:
+                    ...
+                case CvrfProdNS.Branch:
+                    ...
+                case CvrfProdNS.FullProductName:
+                    if all([s in e.text for s in ["Windows 10", "21H2", "x64"]]):
+                        pid = e.get(CVRF_PROD_ATTR_PRODUCT_ID)
+                        branches = [
+                            p
+                            for p in parent_map.ancestors(e)
+                            if p.tag == CvrfProdNS.Branch
+                        ]
+                        branches.reverse()
+                        branch_path = [
+                            " = ".join(
+                                [
+                                    b.get(CVRF_PROD_ATTR_TYPE) or "??",
+                                    repr(b.get(CVRF_PROD_ATTR_NAME)),
+                                ]
+                            )
+                            for b in branches
+                        ]
+                        print(pid, "(" + " > ".join(branch_path) + ")", repr(e.text))
+                        cutoff -= 1
+                case CvrfProdNS.ProductTree:
+                    ...
+                case CvrfVulnNS.Acknowledgment:
+                    ...
+                case CvrfVulnNS.Acknowledgments:
+                    ...
+                case CvrfVulnNS.AffectedFiles:
+                    ...
+                case CvrfVulnNS.BaseScore:
+                    ...
+                case CvrfVulnNS.CVE:
+                    ...
+                case CvrfVulnNS.CVSSScoreSets:
+                    ...
+                case CvrfVulnNS.Description:
+                    ...
+                case CvrfVulnNS.FixedBuild:
+                    ...
+                case CvrfVulnNS.Name:
+                    ...
+                case CvrfVulnNS.Note:
+                    ...
+                case CvrfVulnNS.Notes:
+                    ...
+                case CvrfVulnNS.ProductID:
+                    ...
+                case CvrfVulnNS.ProductStatuses:
+                    ...
+                case CvrfVulnNS.Remediation:
+                    ...
+                case CvrfVulnNS.Remediations:
+                    ...
+                case CvrfVulnNS.RestartRequired:
+                    ...
+                case CvrfVulnNS.Revision:
+                    ...
+                case CvrfVulnNS.RevisionHistory:
+                    ...
+                case CvrfVulnNS.ScoreSet:
+                    ...
+                case CvrfVulnNS.Status:
+                    ...
+                case CvrfVulnNS.SubType:
+                    ...
+                case CvrfVulnNS.Supercedence:
+                    ...
+                case CvrfVulnNS.TemporalScore:
+                    ...
+                case CvrfVulnNS.Threat:
+                    ...
+                case CvrfVulnNS.Threats:
+                    ...
+                case CvrfVulnNS.Title:
+                    ...
+                case CvrfVulnNS.URL:
+                    ...
+                case CvrfVulnNS.Vector:
+                    ...
+                case CvrfVulnNS.Vulnerability:
+                    ...
+
+                case _:
+                    ic(e.tag)
+                    cutoff -= 1
+            if cutoff < 1:
+                break
         break

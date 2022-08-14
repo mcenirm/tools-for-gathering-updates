@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 import xml.etree.ElementTree as ET
-from cmath import exp
+from datetime import datetime, timezone
 
 from .helpers import xmlns
 
@@ -121,6 +121,55 @@ class ProductTree:
     def from_etree(cls, elem: ET.Element) -> CvrfDocument:
         _assert_cvrf_tag(elem, CvrfProdNS.ProductTree)
         return cls(branches=_find_and_make_branch_elements(elem))
+
+
+@dataclasses.dataclass(kw_only=True, frozen=True)
+class Number:
+    value: str | None
+
+    @classmethod
+    def from_etree(cls, elem: ET.Element) -> Number:
+        _assert_cvrf_tag(elem, CvrfNS.Number)
+        return cls(value=elem.text)
+
+
+@dataclasses.dataclass(kw_only=True, frozen=True)
+class Date:
+    dt: datetime | None
+
+    @classmethod
+    def from_etree(cls, elem: ET.Element) -> Date:
+        _assert_cvrf_tag(elem, CvrfNS.Date)
+        dt = datetime.fromisoformat(elem.text)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return cls(dt=dt)
+
+
+@dataclasses.dataclass(kw_only=True, frozen=True)
+class Description:
+    text: str | None
+
+    @classmethod
+    def from_etree(cls, elem: ET.Element) -> Description:
+        _assert_cvrf_tag(elem, CvrfNS.Description)
+        return cls(text=elem.text)
+
+
+@dataclasses.dataclass(kw_only=True, frozen=True)
+class Revision:
+    number: Number | None
+    date: Date | None
+    description: Description | None
+
+    @classmethod
+    def from_etree(cls, elem: ET.Element) -> Revision:
+        _assert_cvrf_tag(elem, CvrfNS.Revision)
+        return cls(
+            number=Number.from_etree(elem.find(CvrfNS.Number)),
+            date=Date.from_etree(elem.find(CvrfNS.Date)),
+            description=Description.from_etree(elem.find(CvrfNS.Description)),
+        )
 
 
 @dataclasses.dataclass(kw_only=True, frozen=True)
