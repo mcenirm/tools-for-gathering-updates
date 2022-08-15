@@ -6,6 +6,13 @@ from datetime import datetime, timezone
 
 from .helpers import xmlns
 
+# TODO evaluate http://www.davekuhlman.org/generateDS.html to convert XMLSchema to Python
+
+# TODO obtain XMLSchema
+# Note: icasi.org redirects to first.org
+# https://stix.mitre.org/language/version1.1.1/ has "All Files (offline)" (https://stix.mitre.org/language/version1.1.1/stix_v1.1.1_offline.zip)
+# ... which includes CVRF xsd under .../external/cvrf_1.1/
+
 
 @xmlns(uri="http://www.icasi.org/CVRF/schema/cvrf/1.1")
 class CvrfNS:
