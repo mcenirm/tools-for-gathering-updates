@@ -36,6 +36,7 @@ class DVD:
 
     growisofs -dvd-compat -Z {repr(str(settings.dvd_device))} -verbose \\
         -iso-level 4 -joliet -joliet-long -rational-rock -udf \\
+        -V {repr(self.label + " " + self.date)} \\
         {repr(str(self.dir))}
 
 3.  Wait for the disc ejection after the burning completes.
