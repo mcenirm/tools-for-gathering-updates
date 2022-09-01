@@ -38,7 +38,8 @@ weekly_dvd.append_to_install_instructions(
 
 # Update the Windows Defender definitions
 
-1. Open an admin PowerShell, change to the optical drive, and run the command:
+1. Open an admin PowerShell, change to the optical drive
+   (or the folder with the transferred files), and run the command:
 
     & '{mpamfe_exe_windows_path}' -q
 
