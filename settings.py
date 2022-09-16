@@ -76,10 +76,10 @@ kb_ignores = {
 }
 
 ## Rhino3D 7
-rhino7_release_date = "20220727"
-rhino7_version_full = "7.21.22208.13001"
+rhino7_release_date = "20220912"
+rhino7_version_full = "7.22.22255.05001"
 rhino7_installer_sha256 = (
-    "34fb75ce6ac178a6906c6ff9ba17925fbff162fd6146834befed86b380ff40a1"
+    "3afb9c0f5257de0411eec9d9b485da1f512fb449dc642e3e5eac50258e83e59f"
 )
 rhino7_installer_file = f"rhino_en-us_{rhino7_version_full}.exe"
 rhino7_installer_url = (
@@ -89,6 +89,9 @@ rhino7_release_notification_url = (
     "https://discourse.mcneel.com/t/rhino-7-service-release-available/114088"
 )
 rhino7_download_latest_url = "https://www.rhino3d.com/download/rhino/latest"
+rhino7_download_latest_windows_confirmation_url = (
+    "https://www.rhino3d.com/download/rhino-for-windows/7/latest"
+)
 
 ## Nessus
 nessus_updates_dir = updates / "nessus"
