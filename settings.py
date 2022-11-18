@@ -93,6 +93,11 @@ rhino7_download_latest_windows_confirmation_url = (
     "https://www.rhino3d.com/download/rhino-for-windows/7/latest"
 )
 
+# TODO POST to https://www.rhino3d.com/download/rhino/latest to get direct download url
+#  * email:           ...       (url encoded: example%40example.com)
+#  * direction_next:  "Next >"  (url encoded: Next+%3E)
+#  * current_page:    license_info
+
 ## Nessus
 nessus_updates_dir = updates / "nessus"
 nessus_plugin_dir_prefix = "nessus-plugin-set-"
