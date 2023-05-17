@@ -74,5 +74,5 @@ if [ -e "${versioned_file}" ]
 then
   error 'versioned file already exists:' "${versioned_file}"
 fi
-ln --no-target-directory -- "${msi_download_file}" "${versioned_file}"
+cp --no-target-directory --preserve=timestamps -- "${msi_download_file}" "${versioned_file}"
 ls -lF -- "${versioned_file}"
