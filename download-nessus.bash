@@ -48,7 +48,7 @@ xmlstarlet select \
 cat "${installer_listing_json}" \
 | jq -S '
 .props.pageProps.products
-| with_entries(select(.key|match("^nessus-8\\.";"i")))[]
+| with_entries(select(.key|match("^nessus-10\\.";"i")))[]
 .downloads[]
 | select(.name|match("-x64\\.msi$";"i"))
 ' > "${latest_json}"
